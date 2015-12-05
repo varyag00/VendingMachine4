@@ -2100,6 +2100,60 @@ public class Tests {
 	//test for outOfOrderLight
 	@Test
 	public void N02() throws DisabledException{
+		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
+		constructCoinArgs.add(5);
+		constructCoinArgs.add(10);
+		constructCoinArgs.add(25);
+		constructCoinArgs.add(100);
+		
+		selButtCount = 3;
+		coinRackCap = 10;
+		popCanRackCap = 1;
+		receptCap = 10;
+		
+		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
+		
+		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
+		configPopNamesArgs.add("Coke");
+		configPopNamesArgs.add("water");
+		configPopNamesArgs.add("stuff");
+		
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(205);
+		
+		configure(configPopNamesArgs, configPopCostArgs);
+		
+		/*	insert(100)	*/
+		insert(100); 				
+		
+		/*	insert(100)	*/
+		insert(100); 			
+		
+		/* 	insert(25)	*/
+		insert(25);
+		
+		/* 	insert(25)	*/
+		insert(25);
+		
+		/*	press(0)	*/
+		press(0);
+		
+		/*	insert(100)	*/
+		insert(100); 				
+		
+		/*	insert(100)	*/
+		insert(100); 			
+		
+		/* 	insert(25)	*/
+		insert(25);
+		
+		/* 	insert(25)	*/
+		insert(25);
+		
+		/*	press(0)	*/
+		press(0);
+		
 		
 	}
 	

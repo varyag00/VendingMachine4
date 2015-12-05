@@ -81,11 +81,28 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     }
 
     //return money button logic
-    public void returnChange(){
+    public void returnMoney(){
     	//TODO: complete implementation
     	
-    	//use availableFunds, return change
-    }
+    	int returnVal = availableFunds;
+    	availableFunds = 0;
+		disp.display("Drink Pop!");
+		
+		//return returnVal;
+		
+		//maybe try-catch a HWException and turn on OoOLight
+		
+		try{
+			deliverChange(0, returnVal);
+		}
+		catch (CapacityExceededException | EmptyException | DisabledException e)
+		{
+			outOfOrderLight.enable();
+		}
+		catch (Exception e){
+			throw(e);
+		}
+	}
     
     
     @Override
@@ -108,6 +125,8 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     public void coinRejected(CoinSlot coinSlotSimulator, Coin coin) {
     }
 
+    
+    //TODO: look at implementation of pressed and apply it to returnMoney
     @Override
     public void pressed(Button button) {
 	Integer index = buttonToIndex.get(button);
