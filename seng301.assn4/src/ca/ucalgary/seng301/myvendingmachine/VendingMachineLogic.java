@@ -46,6 +46,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private Display disp;
     private IndicatorLight exactChangeLight;
     private IndicatorLight outOfOrderLight;
+    private ButtonListener returnButtonListener;
 
     public VendingMachineLogic(VendingMachine vm) {
 		vendingMachine = vm;
@@ -56,6 +57,9 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		    sb.register(this);
 		    buttonToIndex.put(sb, i);
 		}
+		
+		//register returnMoney button
+		vm.getReturnButton().register(returnButtonListener);
 		
 		for(int i = 0; i < vm.getNumberOfCoinRacks(); i++) {
 		    int value = vm.getCoinKindForRack(i);
@@ -76,6 +80,14 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		disp.display("Drink Pop!");
     }
 
+    //return money button logic
+    public void returnChange(){
+    	//TODO: complete implementation
+    	
+    	//use availableFunds, return change
+    }
+    
+    
     @Override
     public void enabled(AbstractHardware<AbstractHardwareListener> hardware) {
     }
