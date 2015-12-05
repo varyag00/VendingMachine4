@@ -27,6 +27,17 @@ import ca.ucalgary.seng301.vendingmachine.hardware.ButtonListener;
 import ca.ucalgary.seng301.vendingmachine.hardware.SimulationException;
 import ca.ucalgary.seng301.vendingmachine.hardware.VendingMachine;
 
+
+/* TODO:
+ * 	-write tests for appropriate messages
+ *  -complete indicator lights implementation
+ *  	-outOfOrderLight: DONE ???
+ *  	-exactChangeLight: TODO
+ *  		-figure out when exactly exact change can be given
+ *  -write tests for indicator lights
+ */
+
+
 public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private int availableFunds = 0;
     private VendingMachine vendingMachine;
@@ -54,7 +65,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		//get references to vm's indicator lights
 		exactChangeLight = vendingMachine.getExactChangeLight();
 		//exact change light should be on unless we can guarantee that change can be made		TODO: this may not need to be turned on yet. depends on change
-		exactChangeLight.activate();
+		exactChangeLight.deactivate();
 		
 		outOfOrderLight = vendingMachine.getOutOfOrderLight();
 		//If a hardware problem occurs, the out of order light will be on; otherwise, it is off.
@@ -106,6 +117,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		    //display message "Drink Pop!" after returning change
 			disp.display("Drink Pop!");
 		}
+		//if something happens to the hardware, outOfOrderLight should activate
 		catch(DisabledException | EmptyException | CapacityExceededException e) {
 			outOfOrderLight.activate();
 		    throw new SimulationException(e);
