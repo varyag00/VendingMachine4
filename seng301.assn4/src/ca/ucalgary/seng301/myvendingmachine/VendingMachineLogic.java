@@ -20,6 +20,7 @@ import ca.ucalgary.seng301.vendingmachine.hardware.CoinSlotListener;
 import ca.ucalgary.seng301.vendingmachine.hardware.DisabledException;
 import ca.ucalgary.seng301.vendingmachine.hardware.Display;
 import ca.ucalgary.seng301.vendingmachine.hardware.EmptyException;
+import ca.ucalgary.seng301.vendingmachine.hardware.IndicatorLight;
 import ca.ucalgary.seng301.vendingmachine.hardware.ProductRack;
 import ca.ucalgary.seng301.vendingmachine.hardware.Button;
 import ca.ucalgary.seng301.vendingmachine.hardware.ButtonListener;
@@ -31,21 +32,37 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private VendingMachine vendingMachine;
     private Map<Button, Integer> buttonToIndex = new HashMap<>();
     private Map<Integer, Integer> valueToIndexMap = new HashMap<>();
+    private Display disp;
+    private IndicatorLight exactChangeLight;
+    private IndicatorLight outOfOrderLight;
 
     public VendingMachineLogic(VendingMachine vm) {
-	vendingMachine = vm;
-
-	vm.getCoinSlot().register(this);
-	for(int i = 0; i < vm.getNumberOfSelectionButtons(); i++) {
-	    Button sb = vm.getSelectionButton(i);
-	    sb.register(this);
-	    buttonToIndex.put(sb, i);
-	}
+		vendingMachine = vm;
 	
-	for(int i = 0; i < vm.getNumberOfCoinRacks(); i++) {
-	    int value = vm.getCoinKindForRack(i);
-	    valueToIndexMap.put(value, i);
-	}
+		vm.getCoinSlot().register(this);
+		for(int i = 0; i < vm.getNumberOfSelectionButtons(); i++) {
+		    Button sb = vm.getSelectionButton(i);
+		    sb.register(this);
+		    buttonToIndex.put(sb, i);
+		}
+		
+		for(int i = 0; i < vm.getNumberOfCoinRacks(); i++) {
+		    int value = vm.getCoinKindForRack(i);
+		    valueToIndexMap.put(value, i);
+		}
+		
+		//get references to vm's indicator lights
+		exactChangeLight = vendingMachine.getExactChangeLight();
+		//exact change light should be on unless we can guarantee that change can be made		TODO: this may not need to be turned on yet. depends on change
+		exactChangeLight.activate();
+		
+		outOfOrderLight = vendingMachine.getOutOfOrderLight();
+		//If a hardware problem occurs, the out of order light will be on; otherwise, it is off.
+		outOfOrderLight.deactivate();
+		
+		//displaying message "Drink Pop!" upon creation of the vending machine
+		disp = vendingMachine.getDisplay();
+		disp.display("Drink Pop!");
     }
 
     @Override
@@ -58,7 +75,10 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 
     @Override
     public void validCoinInserted(CoinSlot coinSlotSimulator, Coin coin) {
-	availableFunds += coin.getValue();
+    	availableFunds += coin.getValue();
+    	
+    	//display current availableFunds 
+		disp.display("Total: " + availableFunds + " units");
     }
 
     @Override
@@ -69,8 +89,10 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     public void pressed(Button button) {
 	Integer index = buttonToIndex.get(button);
 
-	if(index == null)
+	if(index == null){
+		outOfOrderLight.activate();
 	    throw new SimulationException("An invalid selection button was pressed");
+	}
 
 	int cost = vendingMachine.getProductKindCost(index);
 
@@ -81,15 +103,18 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		    pcr.dispenseProduct();
 		    vendingMachine.getCoinReceptacle().storeCoins();
 		    availableFunds = deliverChange(cost, availableFunds);
+		    //display message "Drink Pop!" after returning change
+			disp.display("Drink Pop!");
 		}
 		catch(DisabledException | EmptyException | CapacityExceededException e) {
+			outOfOrderLight.activate();
 		    throw new SimulationException(e);
 		}
 	    }
 	}
 	else {
-	    Display disp = vendingMachine.getDisplay();
-	    disp.display("Cost: " + cost + "; available funds: " + availableFunds);
+		//displays message "Cost is <cost>"
+	    disp.display("Cost is " + cost + "; available funds: " + availableFunds);
 	    final Timer timer = new Timer();
 	    timer.schedule(new TimerTask() {
 		@Override
