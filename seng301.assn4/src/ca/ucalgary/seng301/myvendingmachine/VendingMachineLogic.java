@@ -47,6 +47,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private IndicatorLight exactChangeLight;
     private IndicatorLight outOfOrderLight;
     private ButtonListener returnButtonListener;
+    private int returnButtonHash;
 
     public VendingMachineLogic(VendingMachine vm) {
 		vendingMachine = vm;
@@ -60,6 +61,9 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		
 		//register returnMoney button
 		vm.getReturnButton().register(returnButtonListener);
+		
+		//get returnMoney button's hash
+		returnButtonHash = vm.getReturnButton().hashCode();
 		
 		for(int i = 0; i < vm.getNumberOfCoinRacks(); i++) {
 		    int value = vm.getCoinKindForRack(i);
@@ -129,43 +133,54 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     //TODO: look at implementation of pressed and apply it to returnMoney
     @Override
     public void pressed(Button button) {
-	Integer index = buttonToIndex.get(button);
+    	
+    //if button is returnMoney button	
+    if (button.hashCode() == returnButtonHash){
+    	returnMoney();
+    }
+    	
+    //else button is of selection button type 
+    else {
+    	
+    	Integer index = buttonToIndex.get(button);
 
-	if(index == null){
-		outOfOrderLight.activate();
-	    throw new SimulationException("An invalid selection button was pressed");
-	}
+    	if(index == null){
+    		outOfOrderLight.activate();
+    	    throw new SimulationException("An invalid selection button was pressed");
+    	}
 
-	int cost = vendingMachine.getProductKindCost(index);
+    	int cost = vendingMachine.getProductKindCost(index);
 
-	if(cost <= availableFunds) {
-	    ProductRack pcr = vendingMachine.getProductRack(index);
-	    if(pcr.size() > 0) {
-		try {
-		    pcr.dispenseProduct();
-		    vendingMachine.getCoinReceptacle().storeCoins();
-		    availableFunds = deliverChange(cost, availableFunds);
-		    //display message "Drink Pop!" after returning change
-			disp.display("Drink Pop!");
-		}
-		//if something happens to the hardware, outOfOrderLight should activate
-		catch(DisabledException | EmptyException | CapacityExceededException e) {
-			outOfOrderLight.activate();
-		    throw new SimulationException(e);
-		}
-	    }
-	}
-	else {
-		//displays message "Cost is <cost>"
-	    disp.display("Cost is " + cost + "; available funds: " + availableFunds);
-	    final Timer timer = new Timer();
-	    timer.schedule(new TimerTask() {
-		@Override
-		public void run() {
-		    timer.cancel();
-		}
-	    }, 5000);
-	}
+    	if(cost <= availableFunds) {
+    	    ProductRack pcr = vendingMachine.getProductRack(index);
+    	    if(pcr.size() > 0) {
+    		try {
+    		    pcr.dispenseProduct();
+    		    vendingMachine.getCoinReceptacle().storeCoins();
+    		    availableFunds = deliverChange(cost, availableFunds);
+    		    //display message "Drink Pop!" after returning change
+    			disp.display("Drink Pop!");
+    		}
+    		//if something happens to the hardware, outOfOrderLight should activate
+    		catch(DisabledException | EmptyException | CapacityExceededException e) {
+    			outOfOrderLight.activate();
+    		    throw new SimulationException(e);
+    		}
+    	    }
+    	}
+    	else {
+    		//displays message "Cost is <cost>"
+    	    disp.display("Cost is " + cost + "; available funds: " + availableFunds);
+    	    final Timer timer = new Timer();
+    	    timer.schedule(new TimerTask() {
+    		@Override
+    		public void run() {
+    		    timer.cancel();
+    		}
+    	    }, 5000);
+    	}
+    }
+	
     }
 
     private Map<Integer, List<Integer>> changeHelper(ArrayList<Integer> values, int index, int changeDue) {

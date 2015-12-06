@@ -22,6 +22,7 @@ import ca.ucalgary.seng301.myvendingmachine.VendingMachineLogic;
 import ca.ucalgary.seng301.vendingmachine.Coin;
 import ca.ucalgary.seng301.vendingmachine.Product;
 import ca.ucalgary.seng301.vendingmachine.VendingMachineStoredContents;
+import ca.ucalgary.seng301.vendingmachine.hardware.Button;
 import ca.ucalgary.seng301.vendingmachine.hardware.CoinRack;
 import ca.ucalgary.seng301.vendingmachine.hardware.DisabledException;
 import ca.ucalgary.seng301.vendingmachine.hardware.Display;
@@ -2154,7 +2155,7 @@ public class Tests {
 		/*	press(0)	*/
 		press(0);
 		
-		
+		//TODO: finish this test
 	}
 	
 	//test for exactChangeOnlyLight
@@ -2166,6 +2167,33 @@ public class Tests {
 	//test for "Return Money" button
 	@Test
 	public void N04() throws DisabledException{
+		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
+		constructCoinArgs.add(5);
+		constructCoinArgs.add(10);
+		constructCoinArgs.add(25);
+		constructCoinArgs.add(100);
+		
+		selButtCount = 3;
+		coinRackCap = 10;
+		popCanRackCap = 10;
+		receptCap = 10;
+		
+		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
+		
+		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
+		configPopNamesArgs.add("Coke");
+		configPopNamesArgs.add("water");
+		configPopNamesArgs.add("stuff");
+		
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(205);
+		
+		configure(configPopNamesArgs, configPopCostArgs);
+		
+    	vm.getReturnButton().press();
+    	
+    	//TODO: test that button functionality is being executed
 		
 	}
 	
