@@ -185,7 +185,7 @@ public class NewTests {
 	/*	Ass 4 tests	*/
 	
 	//test for messages
-	//@Test
+//	@Test
 	public void N01() throws DisabledException{
 		
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
@@ -259,7 +259,7 @@ public class NewTests {
 	}
 	
 	//test for outOfOrderLight
-	//@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
+//	@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
 	public void N02() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
 		constructCoinArgs.add(5);
@@ -320,7 +320,7 @@ public class NewTests {
 	}
 	
 	//test for exactChangeOnlyLight
-	//@Test
+	@Test
 	public void N03() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
 		constructCoinArgs.add(5);
@@ -401,12 +401,12 @@ public class NewTests {
 		
 		load(loadCoinCounts, loadPopCounts);
 		
-		//getExactChangeLight Should be on here
+		//getExactChangeLight should be on at this point because enough change cannot be made to return change for the highest price item
 		assertEquals(true, vm.getExactChangeLight().isActive());
 	}
 	
 	//test for "Return Money" button
-//	@Test
+	@Test
 	public void N05() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
 		constructCoinArgs.add(5);

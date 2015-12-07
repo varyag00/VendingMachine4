@@ -98,8 +98,6 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		disp = vendingMachine.getDisplay();
 		disp.display("Drink Pop!");
 		
-		getVMPrices();
-		checkForExactChange();
     }
 
     //return money button logic 
@@ -138,8 +136,8 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     	
     	//gets the most expensive item
     	int mostExpensiveItem = 0;
-    	for (int i = 0; i < vendingMachine.getNumberOfProductRacks(); i++){
-    		if (vendingMachine.getProductKindCost(i) > mostExpensiveItem)
+    	for (int i = 0; i < productCosts.length; i++){
+    		if (productCosts[i] > mostExpensiveItem)
     			mostExpensiveItem = vendingMachine.getProductKindCost(i);
     	}
     	
@@ -156,6 +154,18 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     
     @Override
     public void enabled(AbstractHardware<AbstractHardwareListener> hardware) {
+    	
+		//update VM prices (in case they've changed)
+		getVMPrices();
+
+		//if change can be made for the next purchase
+		if (checkForExactChange()){
+			exactChangeLight.deactivate();
+		}    			
+		//otherwise activate exactChangeLight
+		else {
+			exactChangeLight.activate();
+		}
     }
 
     @Override
@@ -200,20 +210,6 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     		    availableFunds = deliverChange(cost, availableFunds);
     		    //display message "Drink Pop!" after returning change
     			disp.display("Drink Pop!");
-    			
-    			//TODO: exact change logic here
-    			
-    			//update VM prices (in case they've changed)
-    			getVMPrices();
-
-    			//if change can be made for the next purchase
-    			if (checkForExactChange()){
-    				exactChangeLight.deactivate();
-    			}    			
-    			//otherwise activate exactChangeLight
-    			else {
-    				exactChangeLight.activate();
-    			}
     		}
     		//if something happens to the hardware, outOfOrderLight should activate
     		catch(DisabledException | EmptyException | CapacityExceededException e) {
@@ -233,6 +229,18 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     		}
     	    }, 5000);
     	}
+    	
+		//update VM prices (in case they've changed)
+		getVMPrices();
+
+		//if change can be made for the next purchase
+		if (checkForExactChange()){
+			exactChangeLight.deactivate();
+		}    			
+		//otherwise activate exactChangeLight
+		else {
+			exactChangeLight.activate();
+		}
     }
 	
     
