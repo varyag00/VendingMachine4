@@ -185,7 +185,7 @@ public class NewTests {
 	/*	Ass 4 tests	*/
 	
 	//test for messages
-	@Test
+	//@Test
 	public void N01() throws DisabledException{
 		
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
@@ -259,7 +259,7 @@ public class NewTests {
 	}
 	
 	//test for outOfOrderLight
-	@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
+	//@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
 	public void N02() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
 		constructCoinArgs.add(5);
@@ -320,14 +320,94 @@ public class NewTests {
 	}
 	
 	//test for exactChangeOnlyLight
-	@Test
+	//@Test
 	public void N03() throws DisabledException{
+		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
+		constructCoinArgs.add(5);
+		constructCoinArgs.add(10);
+		constructCoinArgs.add(25);
+		constructCoinArgs.add(100);
+		
+		selButtCount = 3;
+		coinRackCap = 10;
+		popCanRackCap = 10;
+		receptCap = 10;
+		
+		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
+		
+		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
+		configPopNamesArgs.add("Coke");
+		configPopNamesArgs.add("water");
+		configPopNamesArgs.add("stuff");
+		
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(205);
+		
+		configure(configPopNamesArgs, configPopCostArgs);
+		
+		/*	load(1, 1, 2, 0; 1, 1, 1) 	*/
+		loadCoinCounts.add(1);
+		loadCoinCounts.add(1);
+		loadCoinCounts.add(2);
+		loadCoinCounts.add(0);
+		
+		loadPopCounts.add(1);
+		loadPopCounts.add(1);
+		loadPopCounts.add(1);
+		
+		load(loadCoinCounts, loadPopCounts);
+		
+		//change can be made here, so exact change light should be off
+		assertEquals(false, vm.getExactChangeLight().isActive());
 		
 	}
 
-	//test for "Return Money" button
-	@Test
+	@Test 			//TODO: uncomment other tests
 	public void N04() throws DisabledException{
+		/*	construct(5, 10, 25, 100; 3; 1; 10; 10)	*/
+		constructCoinArgs.add(5);
+		constructCoinArgs.add(10);
+		constructCoinArgs.add(25);
+		constructCoinArgs.add(100);
+		
+		selButtCount = 3;
+		coinRackCap = 1;
+		popCanRackCap = 10;
+		receptCap = 10;
+		
+		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
+		
+		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
+		configPopNamesArgs.add("Coke");
+		configPopNamesArgs.add("water");
+		configPopNamesArgs.add("stuff");
+		
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(250);
+		configPopCostArgs.add(205);
+		
+		configure(configPopNamesArgs, configPopCostArgs);
+		
+		/*	load(1, 1, 2, 0; 1, 1, 1) 	*/
+		loadCoinCounts.add(1);
+		loadCoinCounts.add(1);
+		loadCoinCounts.add(1);
+		loadCoinCounts.add(1);
+		
+		loadPopCounts.add(1);
+		loadPopCounts.add(1);
+		loadPopCounts.add(1);
+		
+		load(loadCoinCounts, loadPopCounts);
+		
+		//getExactChangeLight Should be on here
+		assertEquals(true, vm.getExactChangeLight().isActive());
+	}
+	
+	//test for "Return Money" button
+//	@Test
+	public void N05() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
 		constructCoinArgs.add(5);
 		constructCoinArgs.add(10);

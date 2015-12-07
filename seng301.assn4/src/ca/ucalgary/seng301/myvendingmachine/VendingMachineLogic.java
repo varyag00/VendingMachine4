@@ -47,6 +47,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private IndicatorLight exactChangeLight;
     private IndicatorLight outOfOrderLight;
     private ButtonListener returnButtonListener;
+    private int[] productCosts;
 
     public VendingMachineLogic(VendingMachine vm) {
 		vendingMachine = vm;
@@ -96,9 +97,12 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		//displaying message "Drink Pop!" upon creation of the vending machine
 		disp = vendingMachine.getDisplay();
 		disp.display("Drink Pop!");
+		
+		getVMPrices();
+		checkForExactChange();
     }
 
-    //return money button logic
+    //return money button logic 
     public void returnMoney(){
 		
 		try{
@@ -116,6 +120,38 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 			throw(e);
 		}
 	}
+    
+    //NOTE: Exact change light only be changed AFTER purchases, not during a purchase
+    
+    //updates the costs for all vending machine products
+    private void getVMPrices(){
+    	int numProducts = vendingMachine.getNumberOfProductRacks();
+    	productCosts = new int[numProducts];
+    	
+    	for (int i = 0; i < numProducts; i++){
+    		productCosts[i] = vendingMachine.getProductKindCost(i); 
+    	}
+    }
+    
+    //checks whether enough change can be made for the next purchase
+    private boolean checkForExactChange(){
+    	
+    	//gets the most expensive item
+    	int mostExpensiveItem = 0;
+    	for (int i = 0; i < vendingMachine.getNumberOfProductRacks(); i++){
+    		if (vendingMachine.getProductKindCost(i) > mostExpensiveItem)
+    			mostExpensiveItem = vendingMachine.getProductKindCost(i);
+    	}
+    	
+    	//gets the maximum change the machine can make
+    	int maxChange = 0;
+    	for (int i = 0; i < vendingMachine.getNumberOfCoinRacks(); i++){
+    		maxChange += vendingMachine.getCoinKindForRack(i) * vendingMachine.getCoinRack(i).size(); 	//total += value of each coin * # of that coin
+    	}
+    	
+    	//if the maximum possible change is greater than the most expensive item, then change can be made for the next purchase
+    	return (maxChange > mostExpensiveItem);
+    }
     
     
     @Override
@@ -164,6 +200,20 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     		    availableFunds = deliverChange(cost, availableFunds);
     		    //display message "Drink Pop!" after returning change
     			disp.display("Drink Pop!");
+    			
+    			//TODO: exact change logic here
+    			
+    			//update VM prices (in case they've changed)
+    			getVMPrices();
+
+    			//if change can be made for the next purchase
+    			if (checkForExactChange()){
+    				exactChangeLight.deactivate();
+    			}    			
+    			//otherwise activate exactChangeLight
+    			else {
+    				exactChangeLight.activate();
+    			}
     		}
     		//if something happens to the hardware, outOfOrderLight should activate
     		catch(DisabledException | EmptyException | CapacityExceededException e) {
