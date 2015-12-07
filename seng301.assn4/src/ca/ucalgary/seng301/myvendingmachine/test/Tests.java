@@ -22,12 +22,12 @@ import ca.ucalgary.seng301.myvendingmachine.VendingMachineLogic;
 import ca.ucalgary.seng301.vendingmachine.Coin;
 import ca.ucalgary.seng301.vendingmachine.Product;
 import ca.ucalgary.seng301.vendingmachine.VendingMachineStoredContents;
-import ca.ucalgary.seng301.vendingmachine.hardware.Button;
 import ca.ucalgary.seng301.vendingmachine.hardware.CoinRack;
 import ca.ucalgary.seng301.vendingmachine.hardware.DisabledException;
 import ca.ucalgary.seng301.vendingmachine.hardware.Display;
 import ca.ucalgary.seng301.vendingmachine.hardware.ProductRack;
 import ca.ucalgary.seng301.vendingmachine.hardware.VendingMachine;
+
 
 public class Tests {
 						
@@ -2022,181 +2022,6 @@ public class Tests {
 		configure(configPopNamesArgs, configPopCostArgs);
 	}
 		
-	/*	Ass 4 tests	*/
-	
-	//test for messages
-	@Test
-	public void N01() throws DisabledException{
-		
-		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
-		constructCoinArgs.add(5);
-		constructCoinArgs.add(10);
-		constructCoinArgs.add(25);
-		constructCoinArgs.add(100);
-		
-		selButtCount = 3;
-		coinRackCap = 10;
-		popCanRackCap = 10;
-		receptCap = 10;
-		
-		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
-		
-		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
-		configPopNamesArgs.add("Coke");
-		configPopNamesArgs.add("water");
-		configPopNamesArgs.add("stuff");
-		
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(205);
-		
-		configure(configPopNamesArgs, configPopCostArgs);
-		
-		/*	load(1, 1, 2, 0; 1, 1, 1) 	*/
-		loadCoinCounts.add(1);
-		loadCoinCounts.add(1);
-		loadCoinCounts.add(2);
-		loadCoinCounts.add(0);
-		
-		loadPopCounts.add(1);
-		loadPopCounts.add(1);
-		loadPopCounts.add(1);
-		
-		load(loadCoinCounts, loadPopCounts);
-		
-		
-		//display should read "Drink Pop!" right now
-		disp = vm.getDisplay();
-		expectedMSG = "Drink Pop!";
-		actualMSG = disp.read();
-		assertEquals(expectedMSG, actualMSG);
-		
-		/*	insert(100)	*/
-		insert(100); 				
-		
-		/*	insert(100)	*/
-		insert(100); 			
-		
-		/* 	press(0)	*/
-		press(0);
-		
-		//display should read "Cost is 250; available funds: 200"
-		expectedMSG = "Cost is 250; available funds: 200";
-		actualMSG = disp.read();
-		assertEquals(expectedMSG, actualMSG);
-				
-		/* 	insert(25)	*/
-		insert(25);
-		
-		/* 	insert(25)	*/
-		insert(25);
-		
-		//display should read "Total: 250 units" at this moment
-		expectedMSG = "Total: 250 units";
-		actualMSG = disp.read();
-		assertEquals(expectedMSG, actualMSG);
-		
-	}
-	
-	//test for outOfOrderLight
-	@Test
-	public void N02() throws DisabledException{
-		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
-		constructCoinArgs.add(5);
-		constructCoinArgs.add(10);
-		constructCoinArgs.add(25);
-		constructCoinArgs.add(100);
-		
-		selButtCount = 3;
-		coinRackCap = 10;
-		popCanRackCap = 1;
-		receptCap = 10;
-		
-		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
-		
-		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
-		configPopNamesArgs.add("Coke");
-		configPopNamesArgs.add("water");
-		configPopNamesArgs.add("stuff");
-		
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(205);
-		
-		configure(configPopNamesArgs, configPopCostArgs);
-		
-		/*	insert(100)	*/
-		insert(100); 				
-		
-		/*	insert(100)	*/
-		insert(100); 			
-		
-		/* 	insert(25)	*/
-		insert(25);
-		
-		/* 	insert(25)	*/
-		insert(25);
-		
-		/*	press(0)	*/
-		press(0);
-		
-		/*	insert(100)	*/
-		insert(100); 				
-		
-		/*	insert(100)	*/
-		insert(100); 			
-		
-		/* 	insert(25)	*/
-		insert(25);
-		
-		/* 	insert(25)	*/
-		insert(25);
-		
-		/*	press(0)	*/
-		press(0);
-		
-		//TODO: finish this test
-	}
-	
-	//test for exactChangeOnlyLight
-	@Test
-	public void N03() throws DisabledException{
-		
-	}
-
-	//test for "Return Money" button
-	@Test
-	public void N04() throws DisabledException{
-		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
-		constructCoinArgs.add(5);
-		constructCoinArgs.add(10);
-		constructCoinArgs.add(25);
-		constructCoinArgs.add(100);
-		
-		selButtCount = 3;
-		coinRackCap = 10;
-		popCanRackCap = 10;
-		receptCap = 10;
-		
-		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
-		
-		/*	configure("Coke", "water", "stuff"; 250, 250, 205)	*/
-		configPopNamesArgs.add("Coke");
-		configPopNamesArgs.add("water");
-		configPopNamesArgs.add("stuff");
-		
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(250);
-		configPopCostArgs.add(205);
-		
-		configure(configPopNamesArgs, configPopCostArgs);
-		
-    	vm.getReturnButton().press();
-    	
-    	//TODO: test that button functionality is being executed
-		
-	}
-	
 	
 	/*	Test Helper Methods	*/
 

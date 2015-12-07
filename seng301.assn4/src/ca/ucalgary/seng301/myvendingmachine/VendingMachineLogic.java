@@ -47,7 +47,6 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private IndicatorLight exactChangeLight;
     private IndicatorLight outOfOrderLight;
     private ButtonListener returnButtonListener;
-    private int returnButtonHash;
 
     public VendingMachineLogic(VendingMachine vm) {
 		vendingMachine = vm;
@@ -59,12 +58,27 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		    buttonToIndex.put(sb, i);
 		}
 		
-		//register returnMoney button
+		//register returnMoney button	
+		returnButtonListener = new ButtonListener() {
+			@Override
+			public void enabled(AbstractHardware<AbstractHardwareListener> hardware) {
+				// do nothing
+			}
+			
+			@Override
+			public void disabled(AbstractHardware<AbstractHardwareListener> hardware) {
+				// do nothing
+			}
+			
+			@Override
+			public void pressed(Button button) {
+				returnMoney(); 
+			}
+		};
+		
 		vm.getReturnButton().register(returnButtonListener);
-		
-		//get returnMoney button's hash
-		returnButtonHash = vm.getReturnButton().hashCode();
-		
+
+
 		for(int i = 0; i < vm.getNumberOfCoinRacks(); i++) {
 		    int value = vm.getCoinKindForRack(i);
 		    valueToIndexMap.put(value, i);
@@ -86,20 +100,15 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 
     //return money button logic
     public void returnMoney(){
-    	//TODO: complete implementation
-    	
-    	int returnVal = availableFunds;
-    	availableFunds = 0;
-		disp.display("Drink Pop!");
-		
-		//return returnVal;
-		
-		//maybe try-catch a HWException and turn on OoOLight
 		
 		try{
-			deliverChange(0, returnVal);
+			//return coins to the user
+			vendingMachine.getCoinReceptacle().returnCoins();
+	    	availableFunds = 0;
+	    	//set display to "no credit" state
+			disp.display("Drink Pop!");
 		}
-		catch (CapacityExceededException | EmptyException | DisabledException e)
+		catch (CapacityExceededException | DisabledException e)
 		{
 			outOfOrderLight.enable();
 		}
@@ -121,6 +130,8 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     public void validCoinInserted(CoinSlot coinSlotSimulator, Coin coin) {
     	availableFunds += coin.getValue();
     	
+    	vendingMachine.getDeliveryChute();
+    	
     	//display current availableFunds 
 		disp.display("Total: " + availableFunds + " units");
     }
@@ -134,14 +145,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     @Override
     public void pressed(Button button) {
     	
-    //if button is returnMoney button	
-    if (button.hashCode() == returnButtonHash){
-    	returnMoney();
-    }
-    	
-    //else button is of selection button type 
-    else {
-    	
+
     	Integer index = buttonToIndex.get(button);
 
     	if(index == null){
@@ -181,7 +185,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     	}
     }
 	
-    }
+    
 
     private Map<Integer, List<Integer>> changeHelper(ArrayList<Integer> values, int index, int changeDue) {
 	if(index >= values.size())
@@ -229,8 +233,10 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     private int deliverChange(int cost, int entered) throws CapacityExceededException, EmptyException, DisabledException {
 	int changeDue = entered - cost;
 
-	if(changeDue < 0)
+	if(changeDue < 0){
+		outOfOrderLight.activate();
 	    throw new InternalError("Cost was greater than entered, which should not happen");
+	}
 
 	ArrayList<Integer> values = new ArrayList<>();
 	for(Integer ck : valueToIndexMap.keySet())
