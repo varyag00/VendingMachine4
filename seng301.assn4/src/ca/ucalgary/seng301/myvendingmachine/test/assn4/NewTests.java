@@ -185,7 +185,7 @@ public class NewTests {
 	/*	Ass 4 tests	*/
 	
 	//test for messages
-//	@Test
+	@Test
 	public void N01() throws DisabledException{
 		
 		/*	construct(5, 10, 25, 100; 3; 10; 10; 10)	*/
@@ -244,7 +244,7 @@ public class NewTests {
 		expectedMSG = "Cost is 250; available funds: 200";
 		actualMSG = disp.read();
 		assertEquals(expectedMSG, actualMSG);
-				
+		
 		/* 	insert(25)	*/
 		insert(25);
 		
@@ -256,10 +256,18 @@ public class NewTests {
 		actualMSG = disp.read();
 		assertEquals(expectedMSG, actualMSG);
 		
+		/* 	press(0)	*/
+		press(0);
+		
+		//display should read "Drink Pop!" right now
+		disp = vm.getDisplay();
+		expectedMSG = "Drink Pop!";
+		actualMSG = disp.read();
+		assertEquals(expectedMSG, actualMSG);
 	}
 	
 	//test for outOfOrderLight
-//	@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
+	@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
 	public void N02() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
 		constructCoinArgs.add(5);
@@ -363,7 +371,7 @@ public class NewTests {
 		
 	}
 
-	@Test 			//TODO: uncomment other tests
+	@Test 			
 	public void N04() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 1; 10; 10)	*/
 		constructCoinArgs.add(5);
@@ -383,7 +391,7 @@ public class NewTests {
 		configPopNamesArgs.add("water");
 		configPopNamesArgs.add("stuff");
 		
-		configPopCostArgs.add(250);
+		configPopCostArgs.add(100);
 		configPopCostArgs.add(250);
 		configPopCostArgs.add(205);
 		
@@ -401,7 +409,13 @@ public class NewTests {
 		
 		load(loadCoinCounts, loadPopCounts);
 		
-		//getExactChangeLight should be on at this point because enough change cannot be made to return change for the highest price item
+		/*	insert(100)	*/
+		insert(100);
+		
+		/*	press(0)	*/
+		press(0);
+		
+		//getExactChangeLight should be on at this point because enough change cannot be made to return change for the highest price item (250)
 		assertEquals(true, vm.getExactChangeLight().isActive());
 	}
 	

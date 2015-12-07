@@ -96,8 +96,7 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
 		
 		//displaying message "Drink Pop!" upon creation of the vending machine
 		disp = vendingMachine.getDisplay();
-		disp.display("Drink Pop!");
-		
+		disp.display("Drink Pop!");	
     }
 
     //return money button logic 
@@ -191,7 +190,6 @@ public class VendingMachineLogic implements CoinSlotListener, ButtonListener {
     @Override
     public void pressed(Button button) {
     	
-
     	Integer index = buttonToIndex.get(button);
 
     	if(index == null){
