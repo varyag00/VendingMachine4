@@ -36,6 +36,7 @@ public class NewTests {
 	
 	VendingMachine vm;
 	VendingMachineStoredContents vmsc;
+	VendingMachineLogic vml;
 	List<Integer> constructCoinArgs;
 	int selButtCount;
 	int coinRackCap;
@@ -104,6 +105,7 @@ public class NewTests {
 		
 		vm = null;
 		vmsc = null;
+		vml = null;
 	}
 
 	/*	VendingMachineFactory methods required to test hardware	*/
@@ -115,7 +117,7 @@ public class NewTests {
 		for(Integer coinKind : coinKinds)
 		    ck[i++] = coinKind;
 		vm = new VendingMachine(ck, selectionButtonCount, coinRackCapacity, popCanRackCapacity, receptacleCapacity);
-		new VendingMachineLogic(vm);
+		vml = new VendingMachineLogic(vm);
     }
 	
     //configure method
@@ -257,7 +259,7 @@ public class NewTests {
 	}
 	
 	//test for outOfOrderLight
-	@Test
+	@Test(expected = ca.ucalgary.seng301.vendingmachine.hardware.SimulationException.class)
 	public void N02() throws DisabledException{
 		/*	construct(5, 10, 25, 100; 3; 10; 1; 10)	*/
 		constructCoinArgs.add(5);
@@ -266,9 +268,9 @@ public class NewTests {
 		constructCoinArgs.add(100);
 		
 		selButtCount = 3;
-		coinRackCap = 10;
+		coinRackCap = 1;
 		popCanRackCap = 1;
-		receptCap = 10;
+		receptCap = 1;
 		
 		construct(constructCoinArgs, selButtCount, coinRackCap, popCanRackCap, receptCap);
 		
@@ -313,8 +315,8 @@ public class NewTests {
 		/*	press(0)	*/
 		press(0);
 		
-		
-		//TODO: finish this test, use deliverChange() in vmLogic for this
+		assertTrue(vm.getOutOfOrderLight().isActive());
+		//by now, a simulation exception should have been thrown (no room for more coins when user attempts to insert), which means 
 	}
 	
 	//test for exactChangeOnlyLight
